@@ -1,0 +1,173 @@
+<main class="workspace-page">
+  <header class="topbar">
+    <a class="brand" routerLink="/workspace" aria-label="Study Nook">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M7 8.5c3.2-.8 6.2.1 9 2.5v13c-2.8-2.4-5.8-3.3-9-2.5v-13Z" />
+          <path d="M25 8.5c-3.2-.8-6.2.1-9 2.5v13c2.8-2.4 5.8-3.3 9-2.5v-13Z" />
+          <path d="M16 11v13" />
+        </svg>
+      </span>
+      <span>study nook</span>
+    </a>
+
+    <div class="workspace-title">
+      <span class="live-dot"></span>
+      <div>
+        <strong>Study Nook · Main Floor</strong>
+        <span>một không gian chung để cùng tập trung</span>
+      </div>
+    </div>
+
+    <div class="topbar-user">
+      <span class="online-count"><span></span> 4 đang ở đây</span>
+      <span class="user-avatar">{{ session.currentUser()?.initials }}</span>
+    </div>
+  </header>
+
+  <section class="workspace-content" aria-label="Không gian học chung">
+    <div class="map-heading">
+      <div>
+        <span class="map-kicker">WEDNESDAY · QUIET HOURS</span>
+        <h1>Chào {{ session.currentUser()?.displayName }}, <em>chọn một góc nhé.</em></h1>
+      </div>
+      <p class="keyboard-hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> hoặc phím mũi tên để di chuyển</p>
+    </div>
+
+    <div class="map-frame">
+      <div class="map-canvas" role="application" tabindex="0" aria-label="Bản đồ workspace chung">
+        <div class="map-path path-one" aria-hidden="true"></div>
+        <div class="map-path path-two" aria-hidden="true"></div>
+
+        <div class="landmark library" aria-hidden="true">
+          <div class="bookshelf"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="book-stack">▤</div>
+          <span class="zone-label">GÓC ĐỌC SÁCH</span>
+        </div>
+
+        <div class="landmark cafe" aria-hidden="true">
+          <div class="awning"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="cafe-counter"></div>
+          <div class="cafe-stool stool-one"></div>
+          <div class="cafe-stool stool-two"></div>
+          <span class="zone-label">COFFEE CORNER</span>
+        </div>
+
+        <div class="landmark lounge" aria-hidden="true">
+          <div class="sofa sofa-one"></div>
+          <div class="sofa sofa-two"></div>
+          <div class="coffee-table"></div>
+          <span class="zone-label">GÓC THƯ GIÃN</span>
+        </div>
+
+        <div class="landmark quiet-zone" aria-hidden="true">
+          <div class="desk desk-one"><span></span></div>
+          <div class="desk desk-two"><span></span></div>
+          <div class="desk desk-three"><span></span></div>
+          <span class="zone-label">BÀN TẬP TRUNG</span>
+        </div>
+
+        <div class="plant plant-one" aria-hidden="true">✿</div>
+        <div class="plant plant-two" aria-hidden="true">✿</div>
+        <div class="plant plant-three" aria-hidden="true">✿</div>
+        <div class="rug" aria-hidden="true"></div>
+
+        @for (participant of participants; track participant.initials) {
+          <div
+            class="person-marker"
+            [style.left]="participant.x + '%'"
+            [style.top]="participant.y + '%'"
+          >
+            <span class="person-avatar" [class]="participant.color">{{ participant.initials }}</span>
+            <span class="person-name">{{ participant.name }}</span>
+            <span class="person-status">{{ participant.status }}</span>
+          </div>
+        }
+
+        <div
+          class="person-marker self-marker"
+          [style.left]="playerPosition().x + '%'"
+          [style.top]="playerPosition().y + '%'"
+        >
+          <span class="self-ring">
+            <span class="person-avatar self-avatar">{{ session.currentUser()?.initials }}</span>
+          </span>
+          <span class="person-name">{{ session.currentUser()?.displayName }}</span>
+          <span class="person-status">bạn · đang ở đây</span>
+        </div>
+
+        <div class="map-caption"><span></span> THE STUDY NOOK · MAIN FLOOR</div>
+        <div class="sound-caption">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 10v4h4l5 4V6l-5 4H4Z" />
+            <path d="M17 9a5 5 0 0 1 0 6M19.5 6.5a8.5 8.5 0 0 1 0 11" />
+          </svg>
+          Âm thanh theo khoảng cách · bản demo
+        </div>
+      </div>
+
+      <div class="control-dock" aria-label="Điều khiển thiết bị">
+        <div class="dock-profile" [attr.aria-label]="'Bạn là ' + session.currentUser()?.displayName">
+          <span class="dock-avatar">{{ session.currentUser()?.initials }}</span>
+          <span class="profile-presence"></span>
+        </div>
+
+        <span class="dock-divider"></span>
+
+        <button
+          class="device-button"
+          [class.device-on]="micEnabled()"
+          [attr.aria-pressed]="micEnabled()"
+          [attr.aria-label]="micEnabled() ? 'Tắt mic' : 'Bật mic'"
+          type="button"
+          (click)="toggleMic()"
+        >
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="9" y="3" width="6" height="12" rx="3" />
+            <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" />
+            @if (!micEnabled()) {
+              <path d="m4 4 16 16" />
+            }
+          </svg>
+          <span>{{ micEnabled() ? 'Mic đang bật' : 'Mic đang tắt' }}</span>
+        </button>
+
+        <button
+          class="device-button"
+          [class.device-on]="cameraEnabled()"
+          [attr.aria-pressed]="cameraEnabled()"
+          [attr.aria-label]="cameraEnabled() ? 'Tắt camera' : 'Bật camera'"
+          type="button"
+          (click)="toggleCamera()"
+        >
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="3" y="6" width="13" height="12" rx="3" />
+            <path d="m16 10 5-3v10l-5-3M4 4l16 16" />
+          </svg>
+          <span>{{ cameraEnabled() ? 'Camera bật' : 'Camera tắt' }}</span>
+        </button>
+
+        <span class="dock-divider"></span>
+
+        <div class="people-summary" aria-label="Có 4 người trong workspace">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="9" cy="8" r="3" />
+            <path d="M3.5 19c.4-3 2.2-4.5 5.5-4.5s5.1 1.5 5.5 4.5M16 5.5a3 3 0 0 1 0 5.8M17 15c2.2.5 3.4 1.8 3.7 4" />
+          </svg>
+          <span>4</span>
+        </div>
+
+        <button class="leave-button" type="button" aria-label="Rời workspace" (click)="leaveWorkspace()">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10 17l5-5-5-5M15 12H3M13 4h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <p class="prototype-note">
+      <span aria-hidden="true">✦</span>
+      Mic và camera hiện chỉ là nút minh họa. Di chuyển khi vùng bản đồ đang được focus.
+    </p>
+  </section>
+</main>

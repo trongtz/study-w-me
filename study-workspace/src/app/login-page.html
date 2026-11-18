@@ -1,0 +1,96 @@
+<main class="login-page">
+  <section class="intro-panel" aria-label="Giới thiệu Study Nook">
+    <a class="brand" routerLink="/login" aria-label="Study Nook">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M7 8.5c3.2-.8 6.2.1 9 2.5v13c-2.8-2.4-5.8-3.3-9-2.5v-13Z" />
+          <path d="M25 8.5c-3.2-.8-6.2.1-9 2.5v13c2.8-2.4 5.8-3.3 9-2.5v-13Z" />
+          <path d="M16 11v13" />
+        </svg>
+      </span>
+      <span>study nook</span>
+    </a>
+
+    <div class="intro-copy">
+      <span class="eyebrow"><span class="status-dot"></span> A little place to focus</span>
+      <h1>Học cùng nhau,<br /><em>theo cách của bạn.</em></h1>
+      <p>
+        Ghé vào một không gian học chung, tìm một góc yên tĩnh và gặp những người
+        cũng đang tập trung như bạn.
+      </p>
+    </div>
+
+    <div class="preview-card" aria-hidden="true">
+      <div class="preview-window">
+        <div class="preview-shelf"></div>
+        <div class="preview-table"></div>
+        <div class="preview-plant">✿</div>
+        <div class="preview-avatar avatar-one">L</div>
+        <div class="preview-avatar avatar-two">A</div>
+        <span class="preview-caption">the quiet corner</span>
+      </div>
+      <span class="preview-note">một góc nhỏ để cùng nhau cố gắng</span>
+    </div>
+
+    <div class="intro-footer">
+      <span>Không gian chung · Prototype học tập</span>
+      <span>01 — 01</span>
+    </div>
+  </section>
+
+  <section class="login-panel">
+    <div class="login-card">
+      <div class="mobile-brand brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M7 8.5c3.2-.8 6.2.1 9 2.5v13c-2.8-2.4-5.8-3.3-9-2.5v-13Z" />
+            <path d="M25 8.5c-3.2-.8-6.2.1-9 2.5v13c2.8-2.4 5.8-3.3 9-2.5v-13Z" />
+            <path d="M16 11v13" />
+          </svg>
+        </span>
+        <span>study nook</span>
+      </div>
+
+      <div class="login-heading">
+        <span class="eyebrow">WELCOME TO YOUR STUDY SPACE</span>
+        <h2>Vào học thôi!</h2>
+        <p>Chọn tên bạn muốn mọi người nhìn thấy trong workspace.</p>
+      </div>
+
+      <form class="login-form" (ngSubmit)="enterWorkspace()">
+        <label for="display-name">Tên hiển thị</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.25" />
+            <path d="M5.5 19c.5-3.2 2.8-5 6.5-5s6 1.8 6.5 5" />
+          </svg>
+          <input
+            id="display-name"
+            name="displayName"
+            type="text"
+            [(ngModel)]="displayName"
+            autocomplete="nickname"
+            maxlength="24"
+            placeholder="Ví dụ: Minh Anh"
+            required
+          />
+        </div>
+        <button class="enter-button" type="submit">
+          <span>Vào workspace</span>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
+      </form>
+
+      <div class="demo-note">
+        <span class="note-icon" aria-hidden="true">✦</span>
+        <p>
+          Đây là đăng nhập giả lập để xem giao diện. Chưa có tài khoản thật và
+          chưa bật mic/camera.
+        </p>
+      </div>
+    </div>
+    <p class="login-legal">Một không gian chung, mọi người cùng ghé vào.</p>
+  </section>
+</main>
