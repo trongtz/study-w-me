@@ -1,15 +1,8 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { AfterViewChecked, Component, effect, ElementRef, HostListener, inject, OnDestroy, OnInit, QueryList, signal, ViewChildren } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MockSessionService } from './mock-session.service';
-
-interface Participant {
-  name: string;
-  initials: string;
-  status: string;
-  color: string;
-  x: number;
-  y: number;
-}
+import { FirebaseAuthService, formatFirebaseAuthError } from './firebase-auth.service';
+import { FirebasePresenceService } from './firebase-presence.service';
+import { WebRtcAudioService } from './webrtc-audio.service';
 
 @Component({
   selector: 'app-workspace-page',
@@ -17,30 +10,118 @@ interface Participant {
   templateUrl: './workspace-page.html',
   styleUrl: './workspace-page.css',
 })
-export class WorkspacePage {
-  readonly session = inject(MockSessionService);
+export class WorkspacePage implements OnInit, OnDestroy, AfterViewChecked {
+  readonly auth = inject(FirebaseAuthService);
+  readonly presence = inject(FirebasePresenceService);
+  readonly audio = inject(WebRtcAudioService);
   private readonly router = inject(Router);
 
-  readonly playerPosition = signal({ x: 49, y: 55 });
-  readonly micEnabled = signal(false);
-  readonly cameraEnabled = signal(false);
-  readonly participants: Participant[] = [
-    { name: 'Linh', initials: 'L', status: 'đang tập trung', color: 'sage', x: 20, y: 35 },
-    { name: 'An', initials: 'A', status: 'đang đọc sách', color: 'rose', x: 78, y: 28 },
-    { name: 'Khoa', initials: 'K', status: 'đang nghỉ một chút', color: 'blue', x: 75, y: 68 },
-  ];
+  readonly leaveError = signal<string | null>(null);
+  readonly micActionError = signal<string | null>(null);
+  readonly cameraEnabled = this.audio.cameraEnabled;
+  readonly cameraActionError = signal<string | null>(null);
+  @ViewChildren('videoElement') private videoElements!: QueryList<ElementRef<HTMLVideoElement>>;
+  private readonly syncAudioPair = effect(() => {
+    this.audio.syncParticipants(
+      this.auth.currentUser(),
+      this.presence.participants(),
+      this.presence.position(),
+    );
+  });
 
-  toggleMic(): void {
-    this.micEnabled.update((enabled) => !enabled);
+  ngOnInit(): void {
+    const user = this.auth.currentUser();
+    if (user) {
+      this.presence.start(user);
+    }
   }
 
-  toggleCamera(): void {
-    this.cameraEnabled.update((enabled) => !enabled);
+  ngOnDestroy(): void {
+    void this.audio.disconnect();
+    void this.presence.stop();
   }
 
-  leaveWorkspace(): void {
-    this.session.signOut();
-    void this.router.navigateByUrl('/login');
+  ngAfterViewChecked(): void {
+    for (const element of this.videoElements?.toArray() ?? []) {
+      const video = element.nativeElement;
+      const uid = video.dataset['remoteUid'];
+      const stream = uid
+        ? this.audio.remoteVideos().find((item) => item.uid === uid)?.stream ?? null
+        : this.audio.localVideo();
+      if (video.srcObject !== stream) {
+        video.srcObject = stream;
+        if (stream) void video.play().catch(() => undefined);
+      }
+    }
+  }
+
+  participantName(uid: string): string {
+    return this.presence.participants().find((participant) => participant.uid === uid)?.displayName ?? 'Người tham gia';
+  }
+
+  async toggleMic(): Promise<void> {
+    this.micActionError.set(null);
+    try {
+      if (this.audio.micEnabled()) {
+        await this.audio.disableMicrophone();
+        await this.presence.setAudioEnabled(false);
+        return;
+      }
+
+      await this.audio.enableMicrophone();
+      try {
+        await this.presence.setAudioEnabled(true);
+      } catch (error) {
+        await this.audio.disableMicrophone();
+        throw error;
+      }
+    } catch (error) {
+      this.micActionError.set(
+        error instanceof Error ? error.message : formatFirebaseAuthError(error),
+      );
+    }
+  }
+
+  async toggleCamera(): Promise<void> {
+    this.cameraActionError.set(null);
+    try {
+      if (this.cameraEnabled()) {
+        await this.audio.disableCamera();
+        await this.presence.setVideoEnabled(false);
+      } else {
+        await this.audio.enableCamera();
+        try {
+          await this.presence.setVideoEnabled(true);
+        } catch (error) {
+          await this.audio.disableCamera();
+          throw error;
+        }
+      }
+    } catch (error) {
+      this.cameraActionError.set(error instanceof Error ? error.message : formatFirebaseAuthError(error));
+    }
+  }
+
+  async leaveWorkspace(): Promise<void> {
+    this.leaveError.set(null);
+
+    try {
+      await this.audio.disableCamera();
+      await this.audio.disableMicrophone();
+      await this.audio.disconnect();
+      const presenceStopped = await this.presence.stop();
+      if (!presenceStopped) {
+        this.leaveError.set(
+          this.presence.error() ?? 'Không thể rời workspace an toàn. Vui lòng thử lại.',
+        );
+        return;
+      }
+
+      await this.auth.signOut();
+      await this.router.navigateByUrl('/login');
+    } catch (error) {
+      this.leaveError.set(error instanceof Error ? error.message : formatFirebaseAuthError(error));
+    }
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -71,9 +152,10 @@ export class WorkspacePage {
     }
 
     event.preventDefault();
-    this.playerPosition.update((position) => ({
+    const position = this.presence.position();
+    this.presence.moveTo({
       x: Math.min(92, Math.max(8, position.x + movement.x)),
       y: Math.min(84, Math.max(14, position.y + movement.y)),
-    }));
+    });
   }
 }

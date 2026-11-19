@@ -75,19 +75,37 @@
             required
           />
         </div>
-        <button class="enter-button" type="submit">
-          <span>Vào workspace</span>
+        <button class="enter-button" type="submit" [disabled]="isBusy">
+          <span>{{ isBusy ? 'Đang đăng nhập…' : 'Tiếp tục với tư cách khách' }}</span>
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </button>
       </form>
 
+      <div class="login-divider"><span>hoặc</span></div>
+
+      <button
+        class="google-button"
+        type="button"
+        [disabled]="isBusy"
+        (click)="signInWithGoogle()"
+      >
+        <span class="google-mark" aria-hidden="true">G</span>
+        <span>{{ isBusy ? 'Đang kết nối…' : 'Tiếp tục với Google' }}</span>
+      </button>
+
+      @if (errorMessage || auth.authError()) {
+        <p class="auth-error" role="alert" aria-live="polite">
+          {{ errorMessage || auth.authError() }}
+        </p>
+      }
+
       <div class="demo-note">
         <span class="note-icon" aria-hidden="true">✦</span>
         <p>
-          Đây là đăng nhập giả lập để xem giao diện. Chưa có tài khoản thật và
-          chưa bật mic/camera.
+          Đăng nhập bằng tài khoản khách hoặc Google. Mic và camera vẫn đang ở
+          chế độ minh họa trong prototype.
         </p>
       </div>
     </div>

@@ -187,7 +187,9 @@ kbd {
   border: 7px solid #fffdf7;
   border-radius: 22px;
   background: #e6d7bd;
-  box-shadow: 0 16px 40px rgba(64, 60, 45, 0.1), 0 2px 5px rgba(64, 60, 45, 0.05);
+  box-shadow:
+    0 16px 40px rgba(64, 60, 45, 0.1),
+    0 2px 5px rgba(64, 60, 45, 0.05);
 }
 
 .map-canvas {
@@ -196,9 +198,23 @@ kbd {
   overflow: hidden;
   background-color: #eadfc9;
   background-image:
-    linear-gradient(45deg, rgba(151, 129, 99, 0.08) 25%, transparent 25%, transparent 75%, rgba(151, 129, 99, 0.08) 75%),
-    linear-gradient(45deg, rgba(151, 129, 99, 0.08) 25%, transparent 25%, transparent 75%, rgba(151, 129, 99, 0.08) 75%);
-  background-position: 0 0, 28px 28px;
+    linear-gradient(
+      45deg,
+      rgba(151, 129, 99, 0.08) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(151, 129, 99, 0.08) 75%
+    ),
+    linear-gradient(
+      45deg,
+      rgba(151, 129, 99, 0.08) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(151, 129, 99, 0.08) 75%
+    );
+  background-position:
+    0 0,
+    28px 28px;
   background-size: 56px 56px;
 }
 
@@ -213,7 +229,7 @@ kbd {
   background:
     radial-gradient(ellipse at 18% 83%, rgba(93, 137, 99, 0.12), transparent 16%),
     radial-gradient(ellipse at 88% 78%, rgba(93, 137, 99, 0.1), transparent 15%);
-  content: "";
+  content: '';
   pointer-events: none;
 }
 
@@ -248,7 +264,9 @@ kbd {
   border: 3px solid #f7efdf;
   border-radius: 13px;
   background: #c8a887;
-  box-shadow: 0 8px 0 #a88068, 0 13px 13px rgba(73, 62, 46, 0.14);
+  box-shadow:
+    0 8px 0 #a88068,
+    0 13px 13px rgba(73, 62, 46, 0.14);
 }
 
 .library {
@@ -268,8 +286,15 @@ kbd {
   height: 33%;
   border: 5px solid #815d4b;
   border-radius: 6px;
-  background: repeating-linear-gradient(90deg, #d9b688 0 10px, #a87455 10px 15px, #e4c69c 15px 23px);
-  box-shadow: inset 0 -4px 0 #684e40, 0 4px 0 #b68b6b;
+  background: repeating-linear-gradient(
+    90deg,
+    #d9b688 0 10px,
+    #a87455 10px 15px,
+    #e4c69c 15px 23px
+  );
+  box-shadow:
+    inset 0 -4px 0 #684e40,
+    0 4px 0 #b68b6b;
 }
 
 .bookshelf i {
@@ -514,7 +539,54 @@ kbd {
   align-items: center;
   width: max-content;
   transform: translate(-50%, -50%);
-  transition: left 120ms ease-out, top 120ms ease-out;
+  transition:
+    left 120ms ease-out,
+    top 120ms ease-out;
+}
+
+.video-strip {
+  position: absolute;
+  z-index: 8;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+  max-width: min(70%, 460px);
+  overflow-x: auto;
+}
+
+.video-tile {
+  position: relative;
+  flex: 0 0 148px;
+  width: 148px;
+  height: 96px;
+  margin: 0;
+  overflow: hidden;
+  border: 2px solid rgba(255, 253, 247, 0.95);
+  border-radius: 12px;
+  background: #34443b;
+  box-shadow: 0 4px 15px rgba(47, 45, 35, 0.2);
+}
+
+.video-tile video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.video-tile figcaption {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+  overflow: hidden;
+  color: white;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 4px #17221a;
+  white-space: nowrap;
 }
 
 .person-avatar {
@@ -529,7 +601,9 @@ kbd {
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 3px 0 rgba(78, 70, 53, 0.15), 0 5px 11px rgba(61, 58, 45, 0.18);
+  box-shadow:
+    0 3px 0 rgba(78, 70, 53, 0.15),
+    0 5px 11px rgba(61, 58, 45, 0.18);
 }
 
 .person-avatar.sage {
@@ -698,7 +772,10 @@ kbd {
   color: #8c675c;
   background: #f9eeeb;
   cursor: pointer;
-  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
 }
 
 .device-button {
@@ -715,6 +792,12 @@ kbd {
 .device-button:hover,
 .leave-button:hover {
   transform: translateY(-1px);
+}
+
+.device-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
 }
 
 .device-button.device-on {
@@ -771,6 +854,36 @@ kbd {
 
 .prototype-note span {
   color: #b2945f;
+}
+
+.audio-status {
+  margin: 7px 0 0;
+  color: #7d887c;
+  font-size: 10px;
+  text-align: center;
+}
+
+.audio-retry {
+  display: block;
+  margin: 8px auto 0;
+  padding: 7px 12px;
+  border: 1px solid #d8e2d5;
+  border-radius: 9px;
+  color: #496d53;
+  background: #eaf2e8;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.auth-error {
+  margin: 10px 0 0;
+  padding: 10px 13px;
+  border: 1px solid #ebc8c0;
+  border-radius: 10px;
+  color: #8a4538;
+  background: #fbefec;
+  font-size: 11px;
 }
 
 button:focus-visible,

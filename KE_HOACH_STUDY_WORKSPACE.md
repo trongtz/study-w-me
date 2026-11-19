@@ -181,15 +181,15 @@ và proximity. Chỉ mở rộng khi luồng này chạy ổn.
 2. Hiển thị avatar trên bản đồ chung; cho dùng phím WASD/mũi tên để di chuyển,
    giới hạn tọa độ trong bản đồ rồi cập nhật vị trí lên RTDB. Có thể thêm kéo/thả
    sau khi di chuyển bằng phím chạy ổn.
-3. Với từng luồng âm thanh từ xa, tính khoảng cách tới vị trí người nghe và điều
-   chỉnh âm lượng bằng Web Audio API: gần thì rõ, xa thì giảm, ngoài ngưỡng thì
-   mute/volume bằng 0.
-4. Chỉ mở kết nối media với người ở gần; cập nhật gain khi vị trí thay đổi, tránh
-   tạo lại kết nối WebRTC chỉ vì người dùng di chuyển.
+3. Với từng luồng âm thanh từ xa, tính khoảng cách trên tọa độ bản đồ 0–100 và
+   điều chỉnh gain bằng Web Audio API: rõ trong bán kính 25 đơn vị, giảm dần từ
+   25 đến 40, và mute ở ngoài bán kính 40.
+4. Chỉ khởi tạo kết nối media với người ở gần; cập nhật gain khi vị trí thay đổi,
+   không tạo lại kết nối WebRTC chỉ vì người dùng di chuyển.
 5. Kiểm tra rằng mute cục bộ luôn có hiệu lực dù người dùng đang gần người khác.
 
-**Đầu ra:** mọi người nhìn thấy cùng một không gian; di chuyển avatar làm thay
-đổi âm lượng của những người ở gần.
+**Đầu ra:** nhóm demo nhỏ nhìn thấy cùng một không gian; di chuyển avatar làm
+thay đổi âm lượng của từng người ở gần. Mesh audio chỉ dùng cho nhóm nhỏ.
 
 ### Giai đoạn 6 — Camera và hoàn thiện trải nghiệm
 

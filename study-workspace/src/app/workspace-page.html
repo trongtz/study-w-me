@@ -20,8 +20,8 @@
     </div>
 
     <div class="topbar-user">
-      <span class="online-count"><span></span> 4 đang ở đây</span>
-      <span class="user-avatar">{{ session.currentUser()?.initials }}</span>
+      <span class="online-count"><span></span>{{ presence.participants().length }} đang ở đây</span>
+      <span class="user-avatar">{{ auth.currentUser()?.initials }}</span>
     </div>
   </header>
 
@@ -29,13 +29,31 @@
     <div class="map-heading">
       <div>
         <span class="map-kicker">WEDNESDAY · QUIET HOURS</span>
-        <h1>Chào {{ session.currentUser()?.displayName }}, <em>chọn một góc nhé.</em></h1>
+        <h1>Chào {{ auth.currentUser()?.displayName }}, <em>chọn một góc nhé.</em></h1>
       </div>
-      <p class="keyboard-hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> hoặc phím mũi tên để di chuyển</p>
+      <p class="keyboard-hint">
+        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> hoặc phím mũi tên để di chuyển
+      </p>
     </div>
 
     <div class="map-frame">
       <div class="map-canvas" role="application" tabindex="0" aria-label="Bản đồ workspace chung">
+        @if (audio.cameraEnabled() || audio.remoteVideos().length) {
+          <div class="video-strip" aria-label="Video người tham gia">
+            @if (audio.cameraEnabled()) {
+              <figure class="video-tile local-video-tile">
+                <video #videoElement autoplay muted playsinline aria-label="Video của bạn"></video>
+                <figcaption>Bạn</figcaption>
+              </figure>
+            }
+            @for (remote of audio.remoteVideos(); track remote.uid) {
+              <figure class="video-tile">
+                <video #videoElement [attr.data-remote-uid]="remote.uid" autoplay playsinline [attr.aria-label]="'Video của ' + participantName(remote.uid)"></video>
+                <figcaption>{{ participantName(remote.uid) }}</figcaption>
+              </figure>
+            }
+          </div>
+        }
         <div class="map-path path-one" aria-hidden="true"></div>
         <div class="map-path path-two" aria-hidden="true"></div>
 
@@ -72,27 +90,31 @@
         <div class="plant plant-three" aria-hidden="true">✿</div>
         <div class="rug" aria-hidden="true"></div>
 
-        @for (participant of participants; track participant.initials) {
-          <div
-            class="person-marker"
-            [style.left]="participant.x + '%'"
-            [style.top]="participant.y + '%'"
-          >
-            <span class="person-avatar" [class]="participant.color">{{ participant.initials }}</span>
-            <span class="person-name">{{ participant.name }}</span>
-            <span class="person-status">{{ participant.status }}</span>
-          </div>
+        @for (participant of presence.participants(); track participant.uid) {
+          @if (participant.uid !== auth.currentUser()?.uid) {
+            <div
+              class="person-marker"
+              [style.left]="participant.x + '%'"
+              [style.top]="participant.y + '%'"
+            >
+              <span class="person-avatar">{{ participant.initials }}</span>
+              <span class="person-name">{{ participant.displayName }}</span>
+              <span class="person-status">
+                {{ participant.audioEnabled ? 'mic đang bật' : participant.videoEnabled ? 'camera đang bật' : 'đang ở đây' }}
+              </span>
+            </div>
+          }
         }
 
         <div
           class="person-marker self-marker"
-          [style.left]="playerPosition().x + '%'"
-          [style.top]="playerPosition().y + '%'"
+          [style.left]="presence.position().x + '%'"
+          [style.top]="presence.position().y + '%'"
         >
           <span class="self-ring">
-            <span class="person-avatar self-avatar">{{ session.currentUser()?.initials }}</span>
+            <span class="person-avatar self-avatar">{{ auth.currentUser()?.initials }}</span>
           </span>
-          <span class="person-name">{{ session.currentUser()?.displayName }}</span>
+          <span class="person-name">{{ auth.currentUser()?.displayName }}</span>
           <span class="person-status">bạn · đang ở đây</span>
         </div>
 
@@ -102,13 +124,13 @@
             <path d="M4 10v4h4l5 4V6l-5 4H4Z" />
             <path d="M17 9a5 5 0 0 1 0 6M19.5 6.5a8.5 8.5 0 0 1 0 11" />
           </svg>
-          Âm thanh theo khoảng cách · bản demo
+          Mic bật · âm thanh gần thì rõ
         </div>
       </div>
 
       <div class="control-dock" aria-label="Điều khiển thiết bị">
-        <div class="dock-profile" [attr.aria-label]="'Bạn là ' + session.currentUser()?.displayName">
-          <span class="dock-avatar">{{ session.currentUser()?.initials }}</span>
+        <div class="dock-profile" [attr.aria-label]="'Bạn là ' + auth.currentUser()?.displayName">
+          <span class="dock-avatar">{{ auth.currentUser()?.initials }}</span>
           <span class="profile-presence"></span>
         </div>
 
@@ -116,20 +138,27 @@
 
         <button
           class="device-button"
-          [class.device-on]="micEnabled()"
-          [attr.aria-pressed]="micEnabled()"
-          [attr.aria-label]="micEnabled() ? 'Tắt mic' : 'Bật mic'"
+          [class.device-on]="audio.micEnabled()"
+          [attr.aria-pressed]="audio.micEnabled()"
+          [attr.aria-label]="audio.micEnabled() ? 'Tắt mic' : 'Bật mic'"
+          [disabled]="audio.busy()"
           type="button"
           (click)="toggleMic()"
         >
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="9" y="3" width="6" height="12" rx="3" />
             <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" />
-            @if (!micEnabled()) {
+            @if (!audio.micEnabled()) {
               <path d="m4 4 16 16" />
             }
           </svg>
-          <span>{{ micEnabled() ? 'Mic đang bật' : 'Mic đang tắt' }}</span>
+          <span>
+            @if (audio.busy()) {
+              Đang bật mic…
+            } @else {
+              {{ audio.micEnabled() ? 'Mic đang bật' : 'Bật mic' }}
+            }
+          </span>
         </button>
 
         <button
@@ -137,27 +166,41 @@
           [class.device-on]="cameraEnabled()"
           [attr.aria-pressed]="cameraEnabled()"
           [attr.aria-label]="cameraEnabled() ? 'Tắt camera' : 'Bật camera'"
+          [disabled]="audio.cameraBusy()"
           type="button"
           (click)="toggleCamera()"
         >
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="3" y="6" width="13" height="12" rx="3" />
-            <path d="m16 10 5-3v10l-5-3M4 4l16 16" />
+            <path d="m16 10 5-3v10l-5-3" />
+            @if (!cameraEnabled()) {
+              <path d="m4 4 16 16" />
+            }
           </svg>
           <span>{{ cameraEnabled() ? 'Camera bật' : 'Camera tắt' }}</span>
         </button>
 
         <span class="dock-divider"></span>
 
-        <div class="people-summary" aria-label="Có 4 người trong workspace">
+        <div
+          class="people-summary"
+          [attr.aria-label]="'Có ' + presence.participants().length + ' người trong workspace'"
+        >
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="9" cy="8" r="3" />
-            <path d="M3.5 19c.4-3 2.2-4.5 5.5-4.5s5.1 1.5 5.5 4.5M16 5.5a3 3 0 0 1 0 5.8M17 15c2.2.5 3.4 1.8 3.7 4" />
+            <path
+              d="M3.5 19c.4-3 2.2-4.5 5.5-4.5s5.1 1.5 5.5 4.5M16 5.5a3 3 0 0 1 0 5.8M17 15c2.2.5 3.4 1.8 3.7 4"
+            />
           </svg>
-          <span>4</span>
+          <span>{{ presence.participants().length }}</span>
         </div>
 
-        <button class="leave-button" type="button" aria-label="Rời workspace" (click)="leaveWorkspace()">
+        <button
+          class="leave-button"
+          type="button"
+          aria-label="Rời workspace"
+          (click)="leaveWorkspace()"
+        >
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M10 17l5-5-5-5M15 12H3M13 4h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-5" />
           </svg>
@@ -167,7 +210,50 @@
 
     <p class="prototype-note">
       <span aria-hidden="true">✦</span>
-      Mic và camera hiện chỉ là nút minh họa. Di chuyển khi vùng bản đồ đang được focus.
+      Âm thanh theo khoảng cách: rõ trong 25 đơn vị, giảm dần và tắt từ 40. Camera truyền video trực tiếp.
     </p>
+    <p class="audio-status" aria-live="polite">
+      @switch (audio.status()) {
+        @case ('off') {
+          Mic đang tắt · bạn vẫn nghe người bật mic ở gần
+        }
+        @case ('waiting') {
+          @if (audio.micEnabled() && audio.nearbyParticipantCount() === 0) {
+            Mic bật · di chuyển lại gần người đang bật mic để nghe
+          } @else {
+            Đang chờ người khác bật mic
+          }
+        }
+        @case ('connecting') {
+          Đang kết nối {{ audio.nearbyParticipantCount() }} người ở gần…
+        }
+        @case ('connected') {
+          Đang nghe {{ audio.connectedParticipantCount() }} người ở gần
+        }
+        @case ('failed') {
+          Có kết nối âm thanh bị lỗi
+        }
+      }
+    </p>
+    @if (audio.playbackBlocked()) {
+      <button class="audio-retry" type="button" (click)="audio.resumePlayback()">
+        Bật tiếng người khác
+      </button>
+    }
+    @if (audio.error()) {
+      <p class="auth-error" role="alert">{{ audio.error() }}</p>
+    }
+    @if (micActionError()) {
+      <p class="auth-error" role="alert">{{ micActionError() }}</p>
+    }
+    @if (cameraActionError()) {
+      <p class="auth-error" role="alert">{{ cameraActionError() }}</p>
+    }
+    @if (leaveError()) {
+      <p class="auth-error" role="alert">{{ leaveError() }}</p>
+    }
+    @if (presence.error()) {
+      <p class="auth-error" role="alert">{{ presence.error() }}</p>
+    }
   </section>
 </main>

@@ -1,19 +1,33 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, Routes } from '@angular/router';
+import { FirebaseAuthService } from './firebase-auth.service';
 import { LoginPage } from './login-page';
-import { MockSessionService } from './mock-session.service';
-import { WorkspacePage } from './workspace-page';
 
-const requireDemoSession: CanActivateFn = () => {
-  const session = inject(MockSessionService);
+const requireAuthentication: CanActivateFn = () => {
+  const auth = inject(FirebaseAuthService);
   const router = inject(Router);
 
-  return session.currentUser() ? true : router.createUrlTree(['/login']);
+  return auth.waitForInitialState().then(() =>
+    auth.currentUser() ? true : router.createUrlTree(['/login']),
+  );
+};
+
+const redirectAuthenticatedUsers: CanActivateFn = () => {
+  const auth = inject(FirebaseAuthService);
+  const router = inject(Router);
+
+  return auth.waitForInitialState().then(() =>
+    auth.currentUser() ? router.createUrlTree(['/workspace']) : true,
+  );
 };
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
-  { path: 'login', component: LoginPage },
-  { path: 'workspace', component: WorkspacePage, canActivate: [requireDemoSession] },
+  { path: 'login', component: LoginPage, canActivate: [redirectAuthenticatedUsers] },
+  {
+    path: 'workspace',
+    loadComponent: () => import('./workspace-page').then((module) => module.WorkspacePage),
+    canActivate: [requireAuthentication],
+  },
   { path: '**', redirectTo: 'login' },
 ];
