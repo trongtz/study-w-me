@@ -1,0 +1,8 @@
+{
+  "name": "study-w-me",
+  "compatibility_date": "2026-11-19",
+  "assets": {
+    "directory": "./dist/study-workspace/browser",
+    "not_found_handling": "single-page-application"
+  }
+}
