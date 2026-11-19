@@ -155,6 +155,11 @@
   font-weight: 450;
 }
 
+.greeting-name {
+  font-family: Arial, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+}
+
 .keyboard-hint {
   display: flex;
   align-items: center;
@@ -842,27 +847,6 @@ kbd {
   background: #f2efe7;
 }
 
-.prototype-note {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  margin: 13px 0 0;
-  color: #999789;
-  font-size: 10px;
-}
-
-.prototype-note span {
-  color: #b2945f;
-}
-
-.audio-status {
-  margin: 7px 0 0;
-  color: #7d887c;
-  font-size: 10px;
-  text-align: center;
-}
-
 .audio-retry {
   display: block;
   margin: 8px auto 0;
@@ -1008,10 +992,6 @@ a:focus-visible {
     font-size: 7px;
   }
 
-  .prototype-note {
-    line-height: 1.5;
-    text-align: center;
-  }
 }
 
 @media (max-width: 430px) {
@@ -1069,9 +1049,5 @@ kbd{width:24px;height:24px;font-size:11px}
 .desk-three .desk-chair{top:-17px;bottom:auto}
 .control-dock{min-height:74px;gap:12px;padding:10px 16px;border-radius:22px}
 .device-button{min-width:142px;height:52px;gap:9px;font-size:13px}
-
-.prototype-note,.audio-status{flex:0 0 auto;margin-top:4px;font-size:12px}
-
-
 
 @media(max-width:760px){.workspace-page{height:auto;min-height:100dvh;overflow:visible}.workspace-content{height:auto;flex:none}.map-frame{height:64dvh;min-height:360px;flex:none}}

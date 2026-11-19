@@ -127,6 +127,19 @@ export class WorkspacePage implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
+  moveToMapPoint(event: MouseEvent): void {
+    const canvas = event.currentTarget;
+    if (!(canvas instanceof HTMLElement)) return;
+
+    const bounds = canvas.getBoundingClientRect();
+    const horizontalRatio = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+    const verticalRatio = Math.min(1, Math.max(0, (event.clientY - bounds.top) / bounds.height));
+    this.presence.moveTo({
+      x: 8 + horizontalRatio * 84,
+      y: 14 + verticalRatio * 70,
+    });
+  }
+
   @HostListener('window:keydown', ['$event'])
   handleKeydown(event: KeyboardEvent): void {
     if (

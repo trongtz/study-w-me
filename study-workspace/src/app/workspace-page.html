@@ -29,15 +29,15 @@
     <div class="map-heading">
       <div>
         <span class="map-kicker">WEDNESDAY · QUIET HOURS</span>
-        <h1>Hi {{ auth.currentUser()?.displayName }}, <em>find your spot.</em></h1>
+        <h1>Hi <span class="greeting-name">{{ auth.currentUser()?.displayName }}</span>, <em>find your spot.</em></h1>
       </div>
       <p class="keyboard-hint">
-        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys to move
+        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, arrow keys, or double-click to move
       </p>
     </div>
 
     <div class="map-frame">
-      <div class="map-canvas" role="application" tabindex="0" aria-label="Shared study room map">
+      <div class="map-canvas" role="application" tabindex="0" aria-label="Shared study room map" (dblclick)="moveToMapPoint($event)">
         @if (audio.cameraEnabled() || audio.remoteVideos().length) {
           <div class="video-strip" aria-label="Participant video">
             @if (audio.cameraEnabled()) {
@@ -207,34 +207,6 @@
         </button>
       </div>
     </div>
-
-    <p class="prototype-note">
-      <span aria-hidden="true">✦</span>
-      Audio is clearest within 25 units, fades with distance, and turns off at 40. Video appears when enabled.
-    </p>
-    <p class="audio-status" aria-live="polite">
-      @switch (audio.status()) {
-        @case ('off') {
-          Mic off · you can still hear nearby people with their mic on
-        }
-        @case ('waiting') {
-          @if (audio.micEnabled() && audio.nearbyParticipantCount() === 0) {
-            Mic on · move closer to someone with their mic on to hear them
-          } @else {
-            Waiting for someone nearby to turn on their mic
-          }
-        }
-        @case ('connecting') {
-          Connecting to {{ audio.nearbyParticipantCount() }} nearby participants…
-        }
-        @case ('connected') {
-          Hearing {{ audio.connectedParticipantCount() }} nearby participants
-        }
-        @case ('failed') {
-          Audio connection failed
-        }
-      }
-    </p>
     @if (audio.playbackBlocked()) {
       <button class="audio-retry" type="button" (click)="audio.resumePlayback()">
         Enable audio playback
