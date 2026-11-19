@@ -150,6 +150,7 @@ export class WebRtcAudioService {
     this.participants.clear();
     participants.forEach((participant) => this.participants.set(participant.uid, participant));
     this.updateRemoteGains();
+    this.refreshRemoteVideos();
     void this.queueReconciliation();
   }
 
@@ -279,9 +280,22 @@ export class WebRtcAudioService {
     peerConnection.addTransceiver('audio', { direction: 'sendrecv' });
     peerConnection.addTransceiver('video', { direction: 'sendrecv' });
     peerConnection.ontrack = (event) => {
+      if (session.closed || this.sessions.get(session.remoteUid) !== session) return;
       const stream = event.streams[0] ?? new MediaStream([event.track]);
-      if (event.track.kind === 'video' || stream.getVideoTracks().length > 0) {
-        this.remoteStreams.set(session.remoteUid, stream);
+      if (event.track.kind === 'video') {
+        // Keep the video tile independent from the audio track. A sendrecv video
+        // transceiver produces a remote track even while the camera is off; that
+        // track stays muted and must not create a blank tile.
+        const videoStream = new MediaStream([event.track]);
+        this.remoteStreams.set(session.remoteUid, videoStream);
+        const refresh = () => {
+          if (this.sessions.get(session.remoteUid) === session && !session.closed) {
+            this.refreshRemoteVideos();
+          }
+        };
+        event.track.addEventListener('unmute', refresh);
+        event.track.addEventListener('mute', refresh);
+        event.track.addEventListener('ended', refresh);
         this.refreshRemoteVideos();
       }
       if (event.track.kind === 'audio') this.attachRemoteAudio(session.remoteUid, stream);
@@ -350,7 +364,18 @@ export class WebRtcAudioService {
   }
 
   private refreshRemoteVideos(): void {
-    this.remoteVideos.set([...this.remoteStreams].map(([uid, stream]) => ({ uid, stream })));
+    const visibleVideos = [...this.remoteStreams].filter(([uid, stream]) => {
+      const participant = this.participants.get(uid);
+      const videoTrack = stream.getVideoTracks()[0];
+      return Boolean(
+        participant?.videoEnabled &&
+        distanceBetween(this.localPosition, participant) <= MAX_CONNECTION_DISTANCE &&
+        videoTrack?.readyState === 'live' &&
+        videoTrack.enabled &&
+        !videoTrack.muted,
+      );
+    });
+    this.remoteVideos.set(visibleVideos.map(([uid, stream]) => ({ uid, stream })));
   }
 
   private updateRemoteGains(): void {

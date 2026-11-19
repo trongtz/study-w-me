@@ -50,8 +50,11 @@ export class WorkspacePage implements OnInit, OnDestroy, AfterViewChecked {
         : this.audio.localVideo();
       if (video.srcObject !== stream) {
         video.srcObject = stream;
-        if (stream) void video.play().catch(() => undefined);
       }
+      // A remote video can be attached before its first frame arrives. If the
+      // browser paused playback during that gap, retry when Angular checks the
+      // view again instead of leaving a permanently blank tile.
+      if (stream && video.paused) void video.play().catch(() => undefined);
     }
   }
 
