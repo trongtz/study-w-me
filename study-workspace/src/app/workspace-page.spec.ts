@@ -62,9 +62,9 @@ describe('WorkspacePage', () => {
     fixture.detectChanges();
 
     expect(presenceMock.start).toHaveBeenCalledWith(user);
-    expect(fixture.nativeElement.textContent).toContain('2 đang ở đây');
+    expect(fixture.nativeElement.textContent).toContain('2 here');
     expect(fixture.nativeElement.textContent).toContain('Linh Tran');
-    expect(fixture.nativeElement.textContent).not.toContain('đang tập trung');
+    expect(fixture.nativeElement.textContent).toContain('find your spot');
   });
 
   it('syncs keyboard movement and keeps the avatar within the map', () => {

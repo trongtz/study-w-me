@@ -84,7 +84,7 @@ describe('WebRtcAudioService', () => {
     await expect(service.enableMicrophone()).rejects.toThrow('Permission denied');
 
     expect(service.micEnabled()).toBe(false);
-    expect(service.error()).toContain('chưa cấp quyền microphone');
+    expect(service.error()).toContain('Microphone access was denied');
   });
 
   it('uses distance-based gain with full, reduced, and muted ranges', () => {

@@ -220,7 +220,7 @@ export class FirebasePresenceService {
 
   private setError(error: unknown): void {
     const message = error instanceof Error ? error.message : String(error);
-    this.error.set(`Không thể đồng bộ workspace với Realtime Database: ${message}`);
+    this.error.set(`Could not sync the workspace with Realtime Database: ${message}`);
   }
 }
 

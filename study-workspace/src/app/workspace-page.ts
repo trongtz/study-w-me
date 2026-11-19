@@ -59,7 +59,7 @@ export class WorkspacePage implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   participantName(uid: string): string {
-    return this.presence.participants().find((participant) => participant.uid === uid)?.displayName ?? 'Người tham gia';
+    return this.presence.participants().find((participant) => participant.uid === uid)?.displayName ?? 'Participant';
   }
 
   async toggleMic(): Promise<void> {
@@ -115,7 +115,7 @@ export class WorkspacePage implements OnInit, OnDestroy, AfterViewChecked {
       const presenceStopped = await this.presence.stop();
       if (!presenceStopped) {
         this.leaveError.set(
-          this.presence.error() ?? 'Không thể rời workspace an toàn. Vui lòng thử lại.',
+          this.presence.error() ?? 'Could not leave the workspace safely. Please try again.',
         );
         return;
       }

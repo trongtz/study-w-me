@@ -1,6 +1,6 @@
 <main class="workspace-page">
   <header class="topbar">
-    <a class="brand" routerLink="/workspace" aria-label="Study Nook">
+    <a class="brand" routerLink="/workspace" aria-label="Study Nook home">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 32 32" fill="none">
           <path d="M7 8.5c3.2-.8 6.2.1 9 2.5v13c-2.8-2.4-5.8-3.3-9-2.5v-13Z" />
@@ -15,40 +15,40 @@
       <span class="live-dot"></span>
       <div>
         <strong>Study Nook · Main Floor</strong>
-        <span>một không gian chung để cùng tập trung</span>
+        <span>A shared space to focus</span>
       </div>
     </div>
 
     <div class="topbar-user">
-      <span class="online-count"><span></span>{{ presence.participants().length }} đang ở đây</span>
+      <span class="online-count"><span></span>{{ presence.participants().length }} here</span>
       <span class="user-avatar">{{ auth.currentUser()?.initials }}</span>
     </div>
   </header>
 
-  <section class="workspace-content" aria-label="Không gian học chung">
+  <section class="workspace-content" aria-label="Shared study space">
     <div class="map-heading">
       <div>
         <span class="map-kicker">WEDNESDAY · QUIET HOURS</span>
-        <h1>Chào {{ auth.currentUser()?.displayName }}, <em>chọn một góc nhé.</em></h1>
+        <h1>Hi {{ auth.currentUser()?.displayName }}, <em>find your spot.</em></h1>
       </div>
       <p class="keyboard-hint">
-        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> hoặc phím mũi tên để di chuyển
+        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys to move
       </p>
     </div>
 
     <div class="map-frame">
-      <div class="map-canvas" role="application" tabindex="0" aria-label="Bản đồ workspace chung">
+      <div class="map-canvas" role="application" tabindex="0" aria-label="Shared study room map">
         @if (audio.cameraEnabled() || audio.remoteVideos().length) {
-          <div class="video-strip" aria-label="Video người tham gia">
+          <div class="video-strip" aria-label="Participant video">
             @if (audio.cameraEnabled()) {
               <figure class="video-tile local-video-tile">
-                <video #videoElement autoplay muted playsinline aria-label="Video của bạn"></video>
-                <figcaption>Bạn</figcaption>
+                <video #videoElement autoplay muted playsinline aria-label="Your video"></video>
+                <figcaption>You</figcaption>
               </figure>
             }
             @for (remote of audio.remoteVideos(); track remote.uid) {
               <figure class="video-tile">
-                <video #videoElement [attr.data-remote-uid]="remote.uid" autoplay playsinline [attr.aria-label]="'Video của ' + participantName(remote.uid)"></video>
+                <video #videoElement [attr.data-remote-uid]="remote.uid" autoplay playsinline [attr.aria-label]="'Video of ' + participantName(remote.uid)"></video>
                 <figcaption>{{ participantName(remote.uid) }}</figcaption>
               </figure>
             }
@@ -60,7 +60,7 @@
         <div class="landmark library" aria-hidden="true">
           <div class="bookshelf"><i></i><i></i><i></i><i></i><i></i></div>
           <div class="book-stack">▤</div>
-          <span class="zone-label">GÓC ĐỌC SÁCH</span>
+          <span class="zone-label">READING NOOK</span>
         </div>
 
         <div class="landmark cafe" aria-hidden="true">
@@ -75,14 +75,14 @@
           <div class="sofa sofa-one"></div>
           <div class="sofa sofa-two"></div>
           <div class="coffee-table"></div>
-          <span class="zone-label">GÓC THƯ GIÃN</span>
+          <span class="zone-label">LOUNGE</span>
         </div>
 
         <div class="landmark quiet-zone" aria-hidden="true">
-          <div class="desk desk-one"><span></span></div>
-          <div class="desk desk-two"><span></span></div>
-          <div class="desk desk-three"><span></span></div>
-          <span class="zone-label">BÀN TẬP TRUNG</span>
+          <div class="desk desk-one"><span></span><i class="desk-chair"></i></div>
+          <div class="desk desk-two"><span></span><i class="desk-chair"></i></div>
+          <div class="desk desk-three"><span></span><i class="desk-chair"></i></div>
+          <span class="zone-label">FOCUS DESKS</span>
         </div>
 
         <div class="plant plant-one" aria-hidden="true">✿</div>
@@ -100,7 +100,7 @@
               <span class="person-avatar">{{ participant.initials }}</span>
               <span class="person-name">{{ participant.displayName }}</span>
               <span class="person-status">
-                {{ participant.audioEnabled ? 'mic đang bật' : participant.videoEnabled ? 'camera đang bật' : 'đang ở đây' }}
+                {{ participant.audioEnabled ? 'Mic on' : participant.videoEnabled ? 'Camera on' : 'Here' }}
               </span>
             </div>
           }
@@ -115,7 +115,7 @@
             <span class="person-avatar self-avatar">{{ auth.currentUser()?.initials }}</span>
           </span>
           <span class="person-name">{{ auth.currentUser()?.displayName }}</span>
-          <span class="person-status">bạn · đang ở đây</span>
+          <span class="person-status">You · here</span>
         </div>
 
         <div class="map-caption"><span></span> THE STUDY NOOK · MAIN FLOOR</div>
@@ -124,12 +124,12 @@
             <path d="M4 10v4h4l5 4V6l-5 4H4Z" />
             <path d="M17 9a5 5 0 0 1 0 6M19.5 6.5a8.5 8.5 0 0 1 0 11" />
           </svg>
-          Mic bật · âm thanh gần thì rõ
+          Proximity audio · up to 40 units
         </div>
       </div>
 
-      <div class="control-dock" aria-label="Điều khiển thiết bị">
-        <div class="dock-profile" [attr.aria-label]="'Bạn là ' + auth.currentUser()?.displayName">
+      <div class="control-dock" aria-label="Device controls">
+        <div class="dock-profile" [attr.aria-label]="'You are ' + auth.currentUser()?.displayName">
           <span class="dock-avatar">{{ auth.currentUser()?.initials }}</span>
           <span class="profile-presence"></span>
         </div>
@@ -140,7 +140,7 @@
           class="device-button"
           [class.device-on]="audio.micEnabled()"
           [attr.aria-pressed]="audio.micEnabled()"
-          [attr.aria-label]="audio.micEnabled() ? 'Tắt mic' : 'Bật mic'"
+          [attr.aria-label]="audio.micEnabled() ? 'Turn microphone off' : 'Turn microphone on'"
           [disabled]="audio.busy()"
           type="button"
           (click)="toggleMic()"
@@ -154,9 +154,9 @@
           </svg>
           <span>
             @if (audio.busy()) {
-              Đang bật mic…
+              Turning mic on…
             } @else {
-              {{ audio.micEnabled() ? 'Mic đang bật' : 'Bật mic' }}
+              {{ audio.micEnabled() ? 'Mic on' : 'Turn mic on' }}
             }
           </span>
         </button>
@@ -165,7 +165,7 @@
           class="device-button"
           [class.device-on]="cameraEnabled()"
           [attr.aria-pressed]="cameraEnabled()"
-          [attr.aria-label]="cameraEnabled() ? 'Tắt camera' : 'Bật camera'"
+          [attr.aria-label]="cameraEnabled() ? 'Turn camera off' : 'Turn camera on'"
           [disabled]="audio.cameraBusy()"
           type="button"
           (click)="toggleCamera()"
@@ -177,14 +177,14 @@
               <path d="m4 4 16 16" />
             }
           </svg>
-          <span>{{ cameraEnabled() ? 'Camera bật' : 'Camera tắt' }}</span>
+          <span>{{ cameraEnabled() ? 'Camera on' : 'Turn camera on' }}</span>
         </button>
 
         <span class="dock-divider"></span>
 
         <div
           class="people-summary"
-          [attr.aria-label]="'Có ' + presence.participants().length + ' người trong workspace'"
+          [attr.aria-label]="presence.participants().length + ' people in the workspace'"
         >
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="9" cy="8" r="3" />
@@ -198,7 +198,7 @@
         <button
           class="leave-button"
           type="button"
-          aria-label="Rời workspace"
+          aria-label="Leave workspace"
           (click)="leaveWorkspace()"
         >
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -210,34 +210,34 @@
 
     <p class="prototype-note">
       <span aria-hidden="true">✦</span>
-      Âm thanh theo khoảng cách: rõ trong 25 đơn vị, giảm dần và tắt từ 40. Camera truyền video trực tiếp.
+      Audio is clearest within 25 units, fades with distance, and turns off at 40. Video appears when enabled.
     </p>
     <p class="audio-status" aria-live="polite">
       @switch (audio.status()) {
         @case ('off') {
-          Mic đang tắt · bạn vẫn nghe người bật mic ở gần
+          Mic off · you can still hear nearby people with their mic on
         }
         @case ('waiting') {
           @if (audio.micEnabled() && audio.nearbyParticipantCount() === 0) {
-            Mic bật · di chuyển lại gần người đang bật mic để nghe
+            Mic on · move closer to someone with their mic on to hear them
           } @else {
-            Đang chờ người khác bật mic
+            Waiting for someone nearby to turn on their mic
           }
         }
         @case ('connecting') {
-          Đang kết nối {{ audio.nearbyParticipantCount() }} người ở gần…
+          Connecting to {{ audio.nearbyParticipantCount() }} nearby participants…
         }
         @case ('connected') {
-          Đang nghe {{ audio.connectedParticipantCount() }} người ở gần
+          Hearing {{ audio.connectedParticipantCount() }} nearby participants
         }
         @case ('failed') {
-          Có kết nối âm thanh bị lỗi
+          Audio connection failed
         }
       }
     </p>
     @if (audio.playbackBlocked()) {
       <button class="audio-retry" type="button" (click)="audio.resumePlayback()">
-        Bật tiếng người khác
+        Enable audio playback
       </button>
     }
     @if (audio.error()) {

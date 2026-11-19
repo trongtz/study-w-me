@@ -57,7 +57,7 @@ export class FirebaseAuthService {
   async signInAsGuest(displayName: string): Promise<void> {
     const name = displayName.trim();
     if (!name) {
-      throw new Error('Vui lòng nhập tên hiển thị.');
+      throw new Error('Enter a display name.');
     }
 
     const credential = await signInAnonymously(this.auth);
@@ -79,25 +79,25 @@ export class FirebaseAuthService {
 export function formatFirebaseAuthError(error: unknown): string {
   if (error instanceof FirebaseError) {
     const knownMessages: Record<string, string> = {
-      'auth/operation-not-allowed': 'Phương thức đăng nhập này chưa được bật trong Firebase Console.',
-      'auth/unauthorized-domain': 'Domain hiện tại chưa được thêm vào Firebase Authorized domains.',
-      'auth/popup-blocked': 'Trình duyệt đã chặn cửa sổ đăng nhập Google. Hãy cho phép popup rồi thử lại.',
-      'auth/popup-closed-by-user': 'Bạn đã đóng cửa sổ đăng nhập Google trước khi hoàn tất.',
-      'auth/network-request-failed': 'Không thể kết nối Firebase. Hãy kiểm tra mạng rồi thử lại.',
+      'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Console.',
+      'auth/unauthorized-domain': 'This domain has not been added to Firebase Authorized domains.',
+      'auth/popup-blocked': 'Your browser blocked the Google sign-in popup. Allow popups and try again.',
+      'auth/popup-closed-by-user': 'The Google sign-in window was closed before sign-in finished.',
+      'auth/network-request-failed': 'Could not connect to Firebase. Check your network and try again.',
     };
 
     return knownMessages[error.code] ?? `Firebase Auth (${error.code}): ${error.message}`;
   }
 
   if (error instanceof Error) {
-    return `Đăng nhập thất bại: ${error.message}`;
+    return `Sign-in failed: ${error.message}`;
   }
 
-  return `Đăng nhập thất bại: ${String(error)}`;
+  return `Sign-in failed: ${String(error)}`;
 }
 
 function toWorkspaceUser(user: User): WorkspaceUser {
-  const displayName = user.displayName?.trim() || user.email?.split('@')[0] || 'Người học';
+  const displayName = user.displayName?.trim() || user.email?.split('@')[0] || 'Student';
   const initials = displayName
     .split(/\s+/)
     .slice(0, 2)

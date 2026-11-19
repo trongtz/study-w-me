@@ -1,6 +1,6 @@
 <main class="login-page">
-  <section class="intro-panel" aria-label="Giới thiệu Study Nook">
-    <a class="brand" routerLink="/login" aria-label="Study Nook">
+  <section class="intro-panel" aria-label="About Study Nook">
+    <a class="brand" routerLink="/login" aria-label="Study Nook home">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 32 32" fill="none">
           <path d="M7 8.5c3.2-.8 6.2.1 9 2.5v13c-2.8-2.4-5.8-3.3-9-2.5v-13Z" />
@@ -13,11 +13,8 @@
 
     <div class="intro-copy">
       <span class="eyebrow"><span class="status-dot"></span> A little place to focus</span>
-      <h1>Học cùng nhau,<br /><em>theo cách của bạn.</em></h1>
-      <p>
-        Ghé vào một không gian học chung, tìm một góc yên tĩnh và gặp những người
-        cũng đang tập trung như bạn.
-      </p>
+      <h1>Study together,<br /><em>your way.</em></h1>
+      <p>Join a shared study space, find a quiet corner, and focus alongside others.</p>
     </div>
 
     <div class="preview-card" aria-hidden="true">
@@ -29,11 +26,11 @@
         <div class="preview-avatar avatar-two">A</div>
         <span class="preview-caption">the quiet corner</span>
       </div>
-      <span class="preview-note">một góc nhỏ để cùng nhau cố gắng</span>
+      <span class="preview-note">A quiet corner to focus together</span>
     </div>
 
     <div class="intro-footer">
-      <span>Không gian chung · Prototype học tập</span>
+      <span>A shared space · Study room prototype</span>
       <span>01 — 01</span>
     </div>
   </section>
@@ -53,12 +50,12 @@
 
       <div class="login-heading">
         <span class="eyebrow">WELCOME TO YOUR STUDY SPACE</span>
-        <h2>Vào học thôi!</h2>
-        <p>Chọn tên bạn muốn mọi người nhìn thấy trong workspace.</p>
+        <h2>Ready to focus?</h2>
+        <p>Choose the name others will see in the workspace.</p>
       </div>
 
       <form class="login-form" (ngSubmit)="enterWorkspace()">
-        <label for="display-name">Tên hiển thị</label>
+        <label for="display-name">Display name</label>
         <div class="input-wrap">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="12" cy="8" r="3.25" />
@@ -71,19 +68,19 @@
             [(ngModel)]="displayName"
             autocomplete="nickname"
             maxlength="24"
-            placeholder="Ví dụ: Minh Anh"
+            placeholder="e.g. Alex Chen"
             required
           />
         </div>
         <button class="enter-button" type="submit" [disabled]="isBusy">
-          <span>{{ isBusy ? 'Đang đăng nhập…' : 'Tiếp tục với tư cách khách' }}</span>
+          <span>{{ isBusy ? 'Signing in…' : 'Continue as guest' }}</span>
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </button>
       </form>
 
-      <div class="login-divider"><span>hoặc</span></div>
+      <div class="login-divider"><span>or</span></div>
 
       <button
         class="google-button"
@@ -92,7 +89,7 @@
         (click)="signInWithGoogle()"
       >
         <span class="google-mark" aria-hidden="true">G</span>
-        <span>{{ isBusy ? 'Đang kết nối…' : 'Tiếp tục với Google' }}</span>
+        <span>{{ isBusy ? 'Connecting…' : 'Continue with Google' }}</span>
       </button>
 
       @if (errorMessage || auth.authError()) {
@@ -103,12 +100,9 @@
 
       <div class="demo-note">
         <span class="note-icon" aria-hidden="true">✦</span>
-        <p>
-          Đăng nhập bằng tài khoản khách hoặc Google. Mic và camera vẫn đang ở
-          chế độ minh họa trong prototype.
-        </p>
+        <p>Sign in as a guest or with Google. Microphone and camera are available in the workspace.</p>
       </div>
     </div>
-    <p class="login-legal">Một không gian chung, mọi người cùng ghé vào.</p>
+    <p class="login-legal">A shared place to focus, together.</p>
   </section>
 </main>

@@ -82,7 +82,7 @@ export class WebRtcAudioService {
     this.error.set(null);
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error('Trình duyệt này không hỗ trợ truy cập microphone.');
+        throw new Error('This browser does not support microphone access.');
       }
 
       const microphoneStream = await navigator.mediaDevices.getUserMedia({
@@ -116,10 +116,10 @@ export class WebRtcAudioService {
     this.cameraBusy.set(true);
     this.error.set(null);
     try {
-      if (!navigator.mediaDevices?.getUserMedia) throw new Error('Trình duyệt này không hỗ trợ truy cập camera.');
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error('This browser does not support camera access.');
       const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
       const track = stream.getVideoTracks()[0];
-      if (!track) throw new Error('Không tìm thấy camera trong thiết bị.');
+      if (!track) throw new Error('No camera was found on this device.');
       this.localVideoTrack = track;
       this.localVideo.set(new MediaStream([track]));
       this.cameraEnabled.set(true);
@@ -255,7 +255,7 @@ export class WebRtcAudioService {
   private createSession(target: SessionTarget): CallSession {
     const localUid = this.localUid;
     if (!localUid) {
-      throw new Error('Đăng nhập lại để bắt đầu cuộc gọi.');
+      throw new Error('Sign in again to start a call.');
     }
 
     const { pair, role } = createSessionTarget(localUid, target.participant.uid);
@@ -309,7 +309,7 @@ export class WebRtcAudioService {
         this.error.set(null);
       } else if (peerConnection.connectionState === 'failed') {
         this.error.set(
-          'WebRTC chưa thể kết nối. Mạng hiện tại có thể cần TURN relay; demo này mới dùng STUN.',
+          'WebRTC could not connect. This network may require a TURN relay; this demo currently uses STUN only.',
         );
       }
       this.refreshStatus();
@@ -678,10 +678,10 @@ function parseIceCandidate(value: unknown): RTCIceCandidateInit | null {
 function formatAudioError(error: unknown): string {
   if (error instanceof DOMException) {
     if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-      return 'Bạn chưa cấp quyền microphone. Hãy cho phép truy cập mic trong trình duyệt rồi thử lại.';
+      return 'Microphone access was denied. Allow microphone access in your browser and try again.';
     }
     if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-      return 'Không tìm thấy microphone trên thiết bị này.';
+      return 'No microphone was found on this device.';
     }
   }
 

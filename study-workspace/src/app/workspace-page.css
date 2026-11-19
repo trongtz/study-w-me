@@ -24,7 +24,7 @@
   gap: 10px;
   color: #344a3d;
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: 21px;
   font-weight: 650;
   letter-spacing: -0.6px;
   text-decoration: none;
@@ -71,14 +71,14 @@
 .workspace-title strong {
   color: #435248;
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 650;
 }
 
 .workspace-title div > span {
   margin-top: 2px;
   color: #96978c;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .topbar-user {
@@ -92,7 +92,7 @@
   align-items: center;
   gap: 7px;
   color: #7f887b;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .online-count > span {
@@ -136,7 +136,7 @@
 
 .map-kicker {
   color: #9a987f;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.7px;
 }
@@ -1044,3 +1044,34 @@ a:focus-visible {
     font-size: 7px;
   }
 }
+
+.workspace-page{display:flex;height:100dvh;min-height:0;flex-direction:column;overflow:hidden;padding-bottom:10px}
+.topbar{height:64px;flex:0 0 64px}
+.workspace-content{display:flex;width:min(100%,1500px);height:auto;min-height:0;flex:1;flex-direction:column}
+.map-heading{min-height:78px;flex:none;align-items:center;padding:10px 2px 12px}
+.map-heading h1{margin-top:5px;font-size:clamp(26px,2.1vw,34px)}
+.keyboard-hint{font-size:13px}
+kbd{width:24px;height:24px;font-size:11px}
+.map-frame{height:auto;min-height:0;flex:1}
+.zone-label{font-size:clamp(10px,.8vw,12px);letter-spacing:.8px}
+.person-avatar{width:44px;height:44px;font-size:15px}
+.person-name{margin-top:5px;padding:4px 9px;font-size:12px}
+.person-status{font-size:10px}
+
+
+.sofa{width:27%;height:56%;border-radius:16px}
+.sofa-one{top:18%;left:8%}
+.sofa-two{top:18%;right:8%;bottom:auto}
+.coffee-table{top:34%;left:35%;width:30%;height:30%}
+.stool-one{left:32%}
+.stool-two{right:32%}
+.desk-chair{position:absolute;bottom:-17px;left:calc(50% - 8px);width:16px;height:13px;border-radius:6px;background:#839083}
+.desk-three .desk-chair{top:-17px;bottom:auto}
+.control-dock{min-height:74px;gap:12px;padding:10px 16px;border-radius:22px}
+.device-button{min-width:142px;height:52px;gap:9px;font-size:13px}
+
+.prototype-note,.audio-status{flex:0 0 auto;margin-top:4px;font-size:12px}
+
+
+
+@media(max-width:760px){.workspace-page{height:auto;min-height:100dvh;overflow:visible}.workspace-content{height:auto;flex:none}.map-frame{height:64dvh;min-height:360px;flex:none}}
